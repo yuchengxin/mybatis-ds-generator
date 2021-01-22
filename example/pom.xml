@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ds-generator</artifactId>
+        <groupId>com.catyee.mybatis</groupId>
+        <version>1.1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>example</artifactId>
+    <packaging>jar</packaging>
+    <description>mybatis dynamic sql generator plus example</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.catyee.mybatis</groupId>
+            <artifactId>ds-generator-core</artifactId>
+            <version>${ds-generator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-parent</artifactId>
+            <version>2.3.8.RELEASE</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <generator.config>${basedir}/src/main/resources//generator/mybatis-generator-config.xml</generator.config>
+        <mybatis.ds.generator.config>${basedir}/src/main/resources/generator/ds-generator-config.xml</mybatis.ds.generator.config>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>${mybatis.generator.version}</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
+                    <contexts>MysqlContext</contexts>
+                    <configurationFile>${generator.config}</configurationFile>
+                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                    <includeCompileDependencies>true</includeCompileDependencies>
+                    <includeAllDependencies>true</includeAllDependencies>
+                    <sqlScript>${basedir}/src/main/resources/schema/table_init_in_h2.sql</sqlScript>
+                    <jdbcURL>jdbc:h2:mem:example;database_to_upper=false;MODE=MySQL;DB_CLOSE_DELAY=-1</jdbcURL>
+                    <jdbcDriver>org.h2.Driver</jdbcDriver>
+                    <jdbcUserId>sa</jdbcUserId>
+                    <jdbcPassword>123</jdbcPassword>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.h2database</groupId >
+                        <artifactId>h2</artifactId>
+                        <version>${h2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.catyee.mybatis</groupId>
+                        <artifactId>ds-generator-core</artifactId>
+                        <version>${ds-generator.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+
+</project>

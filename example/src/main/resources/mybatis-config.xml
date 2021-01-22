@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+<!--    <plugins>-->
+<!--        <plugin interceptor="io.transwarp.transporter.persistence.utils.ShowSqlInterceptor"/>-->
+<!--    </plugins>-->
+    <mappers>
+<!--        <package name="io.transwarp.migrator.persistence.mapper"/>-->
+<!--        <package name="io.transwarp.migrator.persistence.custom.mapper"/>-->
+    </mappers>
+</configuration>

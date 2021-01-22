@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE generatorPlusConfiguration-->
+<!--        PUBLIC "-//mybatis.org//DTD MyBatis Generator plus Configuration //EN"-->
+<!--        "mybatis-generator-plus-config.dtd">-->
+<generatorPlusConfiguration>
+    <joinConfig targetPackage="mapper" targetProject="src/main/resources">
+        <joinDetail tableName="exam_class_grade">
+            <targetTable tableName="exam_student" property="students" leftJoinColumn="id" rightJoinColumn="grade_id" joinType="MORE"/>
+            <targetTable tableName="exam_teacher" property="regulator" leftJoinColumn="regulator_id" rightJoinColumn="id" joinType="ONE"/>
+        </joinDetail>
+    </joinConfig>
+
+    <customTypeConfig>
+        <customType columnName="grade_type" javaType="com.catyee.mybatis.example.custom.entity.GradeType"/>
+        <customType columnName="gender" javaType="com.catyee.mybatis.example.custom.entity.Gender"/>
+        <customType columnName="exam_type" javaType="com.catyee.mybatis.example.custom.entity.ExamType"/>
+
+        <customType columnName="hobbies" javaType="java.util.List" typeHandler="com.catyee.mybatis.example.custom.handler.HobbyListHandler">
+            <genericType javaType="com.catyee.mybatis.example.custom.entity.Hobby"/>
+        </customType>
+        <customType columnName="tech_courses" javaType="java.util.List" typeHandler="com.catyee.mybatis.example.custom.handler.StringListHandler">
+            <genericType javaType="String"/>
+        </customType>
+        <customType columnName="take_courses" javaType="java.util.List" typeHandler="com.catyee.mybatis.example.custom.handler.StringListHandler">
+            <genericType javaType="String"/>
+        </customType>
+        <customType columnName="score" javaType="java.util.Map" typeHandler="com.catyee.mybatis.example.custom.handler.ScoreMapHandler">
+            <genericType javaType="String"/>
+            <genericType javaType="Integer"/>
+        </customType>
+    </customTypeConfig>
+</generatorPlusConfiguration>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.catyee.mybatis</groupId>
+    <artifactId>ds-generator</artifactId>
+    <version>1.1.0</version>
+
+    <modules>
+        <module>core</module>
+        <module>example</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <ds-generator.version>1.1.0</ds-generator.version>
+        <java.version>1.8</java.version>
+        <lombok.version>1.18.4</lombok.version>
+        <mybatis.generator.version>1.4.0</mybatis.generator.version>
+        <mybatis.spring.version>2.1.4</mybatis.spring.version>
+        <mybatis.dynamics.version>1.2.1</mybatis.dynamics.version>
+        <h2.version>1.4.200</h2.version>
+        <logback.version>1.2.3</logback.version>
+        <guava.version>18.0</guava.version>
+        <junit.version>4.12</junit.version>
+        <mysql.version>5.1.45</mysql.version>
+        <jackson.version>2.10.1</jackson.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.catyee.mybatis</groupId>
+                <artifactId>ds-generator-core</artifactId>
+                <version>${ds-generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-core</artifactId>
+                <version>${mybatis.generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.dynamic-sql</groupId>
+                <artifactId>mybatis-dynamic-sql</artifactId>
+                <version>${mybatis.dynamics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
