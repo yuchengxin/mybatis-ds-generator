@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `exam_class_grade`
     `grade_type`       VARCHAR(20)  NOT NULL,
     `regulator_id`     BIGINT(10)   NOT NULL,
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
-    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_exam_class_grade_name` (`name`)
 )
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `exam_teacher`
     `work_seniority`   INT          NOT NULL,
     `tech_courses`     VARCHAR(255) NULL        DEFAULT NULL,
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
-    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_exam_teacher_name` (`name`)
 )
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `exam_student`
     `hometown`         VARCHAR(100) NULL        DEFAULT NULL,
     `hobbies`          TEXT         NULL        DEFAULT NULL,
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
-    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_exam_student_grade_id` (`grade_id`)
 )
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `exam_history_score`
     `exam_time`        DATETIME     NOT NULL,
     `exam_type`        VARCHAR(20)  NOT NULL,
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
-    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_exam_history_score_st_id` (`student_id`)
 )

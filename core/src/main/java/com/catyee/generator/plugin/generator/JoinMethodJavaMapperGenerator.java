@@ -1,7 +1,8 @@
 package com.catyee.generator.plugin.generator;
 
-import com.catyee.generator.config.JoinDetail;
+import com.catyee.generator.config.JoinEntry;
 import com.catyee.generator.config.JoinTarget;
+import org.apache.commons.lang3.tuple.Pair;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
@@ -24,19 +25,19 @@ public class JoinMethodJavaMapperGenerator extends AbstractJavaMapperMethodGener
 
     private static final String MYBATIS3_CUSTOM_UTILS = "com.catyee.generator.utils.MyBatis3CustomUtils";
 
-    private final JoinDetail joinDetail;
+    private final JoinEntry joinEntry;
     private final String tableFieldName;
     private final FragmentGenerator fragmentGenerator;
     private final FullyQualifiedJavaType recordType;
     private final String resultMapId;
 
-    public JoinMethodJavaMapperGenerator(Context context, IntrospectedTable table, JoinDetail joinDetail) {
+    public JoinMethodJavaMapperGenerator(Context context, IntrospectedTable table, JoinEntry joinEntry) {
         this.context = context;
         this.introspectedTable = table;
         this.progressCallback = new NullProgressCallback();
         this.warnings = new ArrayList<>();
-        this.joinDetail = joinDetail;
-        this.resultMapId = JoinDetail.getJoinResultMapId(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+        this.joinEntry = joinEntry;
+        this.resultMapId = JoinEntry.getJoinResultMapId(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
         this.tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
         this.recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
         this.fragmentGenerator = new FragmentGenerator.Builder()
@@ -195,27 +196,36 @@ public class JoinMethodJavaMapperGenerator extends AbstractJavaMapperMethodGener
         returnType.addTypeArgument(recordType);
 
         imports.add(returnType);
-        imports.add(FullyQualifiedJavaType.getNewMapInstance());
-        imports.add(FullyQualifiedJavaType.getNewHashMapInstance());
+        imports.add(FullyQualifiedJavaType.getNewListInstance());
+        imports.add(FullyQualifiedJavaType.getNewArrayListInstance());
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlTable"));
+        imports.add(new FullyQualifiedJavaType("com.catyee.generator.entity.JoinDetail"));
 
         Method method = new Method("leftJoinSelect");
         method.setDefault(true);
         method.addParameter(new Parameter(parameterType, "completer"));
         method.setReturnType(returnType);
-        method.addBodyLine("Map<SqlTable, BasicColumn> rightTables = new HashMap<>();");
-        IntrospectedColumn leftTableJoinColumn = GeneratorUtils.getIntrospectedColumn(introspectedTable, joinDetail.getJoinColumn());
-        for (JoinTarget joinTarget : joinDetail.getJoinTargets()) {
-            IntrospectedTable targetTable = GeneratorUtils.getIntrospectedTable(context, joinTarget.getTargetTable());
-            staticImports.add(GeneratorUtils.getDynamicSqlSupportSubTableType(targetTable));
+        method.addBodyLine("List<JoinDetail> joinDetails = new ArrayList<>();");
+        for (Pair<String, JoinTarget> detail : joinEntry.getDetails()) {
+            String leftTableJoinColumnName = detail.getLeft();
+            JoinTarget joinTarget = detail.getRight();
+            IntrospectedColumn leftTableJoinColumn = GeneratorUtils.getIntrospectedColumn(
+                    introspectedTable, leftTableJoinColumnName
+            );
 
-            String targetTableFieldName = JavaBeansUtil.getValidPropertyName(targetTable.getFullyQualifiedTable().getDomainObjectName());
-            IntrospectedColumn targetJoinColumn = GeneratorUtils.getIntrospectedColumn(targetTable, joinTarget.getJoinColumn());
+            IntrospectedTable rightJoinTable = GeneratorUtils.getIntrospectedTable(context, joinTarget.getRightTable());
+            staticImports.add(GeneratorUtils.getDynamicSqlSupportSubTableType(rightJoinTable));
+
+            String targetTableFieldName = JavaBeansUtil.getValidPropertyName(
+                    rightJoinTable.getFullyQualifiedTable().getDomainObjectName()
+            );
+            IntrospectedColumn targetJoinColumn = GeneratorUtils.getIntrospectedColumn(rightJoinTable, joinTarget.getJoinColumn());
             String targetJoinColumnName = targetTableFieldName + "." + targetJoinColumn.getJavaProperty();
-            method.addBodyLine("rightTables.put(" + targetTableFieldName + ", " + targetJoinColumnName + ");");
+            method.addBodyLine("joinDetails.add(JoinDetail.of(" + leftTableJoinColumn.getJavaProperty() + ", "
+                    + targetTableFieldName + ", " + targetJoinColumnName + "));");
         }
         method.addBodyLine("return MyBatis3CustomUtils.leftJoinSelectList(this::leftJoinSelectMany, leftJoinSelectList, " +
-                tableFieldName + ", " + leftTableJoinColumn.getJavaProperty() + ", rightTables , completer);");
+                tableFieldName + ", joinDetails , completer);");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)
@@ -240,26 +250,35 @@ public class JoinMethodJavaMapperGenerator extends AbstractJavaMapperMethodGener
         returnType.addTypeArgument(recordType);
 
         imports.add(returnType);
-        imports.add(FullyQualifiedJavaType.getNewMapInstance());
-        imports.add(FullyQualifiedJavaType.getNewHashMapInstance());
+        imports.add(FullyQualifiedJavaType.getNewListInstance());
+        imports.add(FullyQualifiedJavaType.getNewArrayListInstance());
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlTable"));
+        imports.add(new FullyQualifiedJavaType("com.catyee.generator.entity.JoinDetail"));
 
         Method method = new Method("leftJoinSelectOne");
         method.setDefault(true);
         method.addParameter(new Parameter(parameterType, "completer"));
         method.setReturnType(returnType);
-        method.addBodyLine("Map<SqlTable, BasicColumn> rightTables = new HashMap<>();");
-        IntrospectedColumn leftTableJoinColumn = GeneratorUtils.getIntrospectedColumn(introspectedTable, joinDetail.getJoinColumn());
-        for (JoinTarget joinTarget : joinDetail.getJoinTargets()) {
-            IntrospectedTable targetTable = GeneratorUtils.getIntrospectedTable(context, joinTarget.getTargetTable());
-            staticImports.add(GeneratorUtils.getDynamicSqlSupportSubTableType(targetTable));
-            String targetTableFieldName = JavaBeansUtil.getValidPropertyName(targetTable.getFullyQualifiedTable().getDomainObjectName());
-            IntrospectedColumn targetJoinColumn = GeneratorUtils.getIntrospectedColumn(targetTable, joinTarget.getJoinColumn());
+        method.addBodyLine("List<JoinDetail> joinDetails = new ArrayList<>();");
+        for (Pair<String, JoinTarget> detail : joinEntry.getDetails()) {
+            String leftTableJoinColumnName = detail.getLeft();
+            JoinTarget joinTarget = detail.getRight();
+            IntrospectedColumn leftTableJoinColumn = GeneratorUtils.getIntrospectedColumn(
+                    introspectedTable, leftTableJoinColumnName
+            );
+
+            IntrospectedTable rightJoinTable = GeneratorUtils.getIntrospectedTable(context, joinTarget.getRightTable());
+            staticImports.add(GeneratorUtils.getDynamicSqlSupportSubTableType(rightJoinTable));
+            String targetTableFieldName = JavaBeansUtil.getValidPropertyName(
+                    rightJoinTable.getFullyQualifiedTable().getDomainObjectName()
+            );
+            IntrospectedColumn targetJoinColumn = GeneratorUtils.getIntrospectedColumn(rightJoinTable, joinTarget.getJoinColumn());
             String targetJoinColumnName = targetTableFieldName + "." + targetJoinColumn.getJavaProperty();
-            method.addBodyLine("rightTables.put(" + targetTableFieldName + ", " + targetJoinColumnName + ");");
+            method.addBodyLine("joinDetails.add(JoinDetail.of(" + leftTableJoinColumn.getJavaProperty() + ", "
+                    + targetTableFieldName + ", " + targetJoinColumnName + "));");
         }
         method.addBodyLine("return MyBatis3CustomUtils.leftJoinSelectOne(this::leftJoinSelectOne, leftJoinSelectList, " +
-                tableFieldName + ", " + leftTableJoinColumn.getJavaProperty() + ", rightTables , completer);");
+                tableFieldName + ", joinDetails , completer);");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)
@@ -277,10 +296,13 @@ public class JoinMethodJavaMapperGenerator extends AbstractJavaMapperMethodGener
 
         FullyQualifiedJavaType fieldType = new FullyQualifiedJavaType("org.mybatis.dynamic.sql.BasicColumn[]");
         imports.add(fieldType);
-        List<IntrospectedTable> joinTargetTables = joinDetail.getJoinTargets().stream().map(target ->
-                GeneratorUtils.getIntrospectedTable(context, target.getTargetTable())).collect(Collectors.toList());
+        List<IntrospectedTable> joinTargetTables = joinEntry.getDetails().stream().map(
+                target -> GeneratorUtils.getIntrospectedTable(context, target.getRight().getRightTable())
+        ).collect(Collectors.toList());
 
-        Set<String> staticImports = joinTargetTables.stream().map(GeneratorUtils::getDynamicSqlSupportSubTableType).collect(Collectors.toSet());
+        Set<String> staticImports = joinTargetTables.stream().map(
+                GeneratorUtils::getDynamicSqlSupportSubTableType
+        ).collect(Collectors.toSet());
 
         Field field = new Field("leftJoinSelectList", fieldType);
         field.setInitializationString("BasicColumn.columnList("
@@ -301,8 +323,8 @@ public class JoinMethodJavaMapperGenerator extends AbstractJavaMapperMethodGener
         return joinTargetTable.getAllColumns().stream().map(column -> {
             String actualName = column.getActualColumnName();
             return "\n\t\t(" + targetTableFieldName + "." + column.getJavaProperty() + ").as(\""
-                            + GeneratorUtils.generateAliasedColumn(joinTargetTable.getFullyQualifiedTable().getIntrospectedTableName(),
-                    actualName) + "\")";
+                            + GeneratorUtils.generateAliasedColumn(joinTargetTable.getFullyQualifiedTable()
+                            .getIntrospectedTableName(), actualName) + "\")";
         }).collect(Collectors.joining(", "));
     }
 

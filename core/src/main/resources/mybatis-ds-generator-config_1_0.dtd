@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!--
+          mybatis dynamic sql generator config dtd
+        -->
+        <!ELEMENT generatorPlusConfiguration (joinConfig?, customTypeConfig?)>
+
+        <!--
+          join config
+        -->
+        <!ELEMENT joinConfig (joinEntry*)>
+        <!ATTLIST joinConfig
+                targetPackage CDATA #REQUIRED
+                targetProject CDATA #REQUIRED
+                >
+
+        <!--
+          join entry
+        -->
+        <!ELEMENT joinEntry (joinTarget*)>
+        <!ATTLIST joinEntry
+                leftTable CDATA #REQUIRED
+                >
+
+        <!--
+          join target table
+        -->
+        <!ELEMENT joinTarget EMPTY>
+        <!ATTLIST joinTarget
+                rightTable CDATA #REQUIRED
+                property CDATA #REQUIRED
+                leftTableColumn CDATA #REQUIRED
+                rightTableColumn CDATA #REQUIRED
+                joinType CDATA #REQUIRED
+                >
+
+        <!--
+          custom type config
+        -->
+        <!ELEMENT customTypeConfig (customType*)>
+
+        <!--
+          custom type
+        -->
+        <!ELEMENT customType (genericType*)>
+        <!ATTLIST customType
+                columnName CDATA #REQUIRED
+                javaType CDATA #REQUIRED
+                property CDATA #IMPLIED
+                jdbcType CDATA #IMPLIED
+                typeHandler CDATA #IMPLIED
+                delimitedColumnName CDATA #IMPLIED
+                >
+
+        <!--
+            generic type
+        -->
+        <!ELEMENT genericType EMPTY>
+        <!ATTLIST genericType
+                javaType CDATA #REQUIRED
+                >

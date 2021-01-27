@@ -1,7 +1,8 @@
 package com.catyee.generator.plugin.generator;
 
-import com.catyee.generator.config.JoinDetail;
+import com.catyee.generator.config.JoinEntry;
 import com.catyee.generator.config.JoinTarget;
+import org.apache.commons.lang3.tuple.Pair;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.Document;
@@ -14,6 +15,7 @@ import org.mybatis.generator.internal.DefaultShellCallback;
 import org.mybatis.generator.internal.XmlFileMergerJaxp;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +27,13 @@ public class JoinResultXmlMapperGenerator {
     private final ShellCallback shellCallback;
     private final Context context;
     private final IntrospectedTable introspectedTable;
-    private final JoinDetail joinDetail;
+    private final JoinEntry joinEntry;
 
-    public JoinResultXmlMapperGenerator(Context context, IntrospectedTable introspectedTable, JoinDetail joinDetail) {
+    public JoinResultXmlMapperGenerator(Context context, IntrospectedTable introspectedTable, JoinEntry joinEntry) {
         this.shellCallback = new DefaultShellCallback(true);
         this.context = context;
         this.introspectedTable = introspectedTable;
-        this.joinDetail = joinDetail;
+        this.joinEntry = joinEntry;
     }
 
     public void generate() {
@@ -41,7 +43,7 @@ public class JoinResultXmlMapperGenerator {
 
     private void addElements(XmlElement parentElement) {
         XmlElement answer = new XmlElement("resultMap");
-        String joinResultMapId = JoinDetail.getJoinResultMapId(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+        String joinResultMapId = JoinEntry.getJoinResultMapId(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
         answer.addAttribute(new Attribute("id", joinResultMapId));
         String returnType = introspectedTable.getBaseRecordType();
         answer.addAttribute(new Attribute("type", returnType));
@@ -80,11 +82,13 @@ public class JoinResultXmlMapperGenerator {
             answer.addElement(resultElement);
         }
 
+        List<Pair<String, JoinTarget>> sortResult = sort(joinEntry.getDetails());
         // add join columns
-        for (JoinTarget target : joinDetail.getJoinTargets()) {
+        for (Pair<String, JoinTarget> detail : sortResult) {
+            JoinTarget target = detail.getRight();
             XmlElement joinElement = new XmlElement(target.getType() == JoinTarget.JoinType.MORE ? "collection" : "association");
             joinElement.addAttribute(new Attribute("property", target.getFiledName()));
-            IntrospectedTable targetTable = GeneratorUtils.getIntrospectedTable(context, target.getTargetTable());
+            IntrospectedTable targetTable = GeneratorUtils.getIntrospectedTable(context, target.getRightTable());
             String type = targetTable.getBaseRecordType();
             joinElement.addAttribute(new Attribute(target.getType() == JoinTarget.JoinType.MORE ? "ofType" : "javaType", type));
             addJoinElements(targetTable, joinElement);
@@ -138,7 +142,7 @@ public class JoinResultXmlMapperGenerator {
     private GeneratedXmlFile getGeneratedXmlFile() {
         Document document = getDocument();
         return new GeneratedXmlFile(document, calculateMyBatis3XmlMapperFileName(), calculateSqlMapPackage(),
-                joinDetail.getTargetProject(), false, context.getXmlFormatter());
+                joinEntry.getTargetProject(), false, context.getXmlFormatter());
     }
 
     private Document getDocument() {
@@ -188,7 +192,7 @@ public class JoinResultXmlMapperGenerator {
         TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
         FullyQualifiedTable fullyQualifiedTable = introspectedTable.getFullyQualifiedTable();
 
-        sb.append(joinDetail.getTargetPackage());
+        sb.append(joinEntry.getTargetPackage());
         sb.append(fullyQualifiedTable.getSubPackageForClientOrSqlMap(false));
         if (stringHasValue(tableConfiguration.getMapperName())) {
             String mapperName = tableConfiguration.getMapperName();
@@ -285,5 +289,20 @@ public class JoinResultXmlMapperGenerator {
         try (BufferedWriter bw = new BufferedWriter(osw)) {
             bw.write(content);
         }
+    }
+
+    private List<Pair<String, JoinTarget>> sort(List<Pair<String, JoinTarget>> joinDetails) {
+        List<Pair<String, JoinTarget>> oneTypeJoinDetails = new ArrayList<>();
+        List<Pair<String, JoinTarget>> moreTypeJoinDetails = new ArrayList<>();
+        for (Pair<String, JoinTarget> detail : joinDetails) {
+            if (detail.getRight().getType() == JoinTarget.JoinType.MORE) {
+                moreTypeJoinDetails.add(detail);
+            }
+            if (detail.getRight().getType() == JoinTarget.JoinType.ONE) {
+                oneTypeJoinDetails.add(detail);
+            }
+        }
+        oneTypeJoinDetails.addAll(moreTypeJoinDetails);
+        return oneTypeJoinDetails;
     }
 }

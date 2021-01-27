@@ -1,5 +1,6 @@
 package com.catyee.generator.utils;
 
+import com.catyee.generator.entity.JoinDetail;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.SortSpecification;
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -12,7 +13,6 @@ import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.ToLongFunction;
 
@@ -29,16 +29,14 @@ public class MyBatis3CustomUtils {
      * @param mapper
      * @param joinSelectList
      * @param leftTable
-     * @param joinColumn
-     * @param rightTables
+     * @param joinDetails
      * @param completer
      * @param <R>
      * @return
      */
     public static <R> R leftJoinSelectOne(Function<SelectStatementProvider, R> mapper, BasicColumn[] joinSelectList,
-                                          SqlTable leftTable, BasicColumn joinColumn,
-                                          Map<SqlTable, BasicColumn> rightTables, SelectDSLCompleter completer) {
-        return mapper.apply(leftJoinSelect(joinSelectList, leftTable, joinColumn, rightTables, completer));
+                                          SqlTable leftTable, List<JoinDetail> joinDetails, SelectDSLCompleter completer) {
+        return mapper.apply(leftJoinSelect(joinSelectList, leftTable, joinDetails, completer));
     }
 
     /**
@@ -47,16 +45,14 @@ public class MyBatis3CustomUtils {
      * @param mapper
      * @param joinSelectList
      * @param leftTable
-     * @param joinColumn
-     * @param rightTables
+     * @param joinDetails
      * @param completer
      * @param <R>
      * @return
      */
     public static <R> List<R> leftJoinSelectList(Function<SelectStatementProvider, List<R>> mapper, BasicColumn[] joinSelectList,
-                                                 SqlTable leftTable, BasicColumn joinColumn,
-                                                 Map<SqlTable, BasicColumn> rightTables, SelectDSLCompleter completer) {
-        return mapper.apply(leftJoinSelect(joinSelectList, leftTable, joinColumn, rightTables, completer));
+                                                 SqlTable leftTable, List<JoinDetail> joinDetails, SelectDSLCompleter completer) {
+        return mapper.apply(leftJoinSelect(joinSelectList, leftTable, joinDetails, completer));
     }
 
     /**
@@ -117,10 +113,11 @@ public class MyBatis3CustomUtils {
         return MyBatis3Utils.select(start, completer);
     }
 
-    public static SelectStatementProvider leftJoinSelect(BasicColumn[] joinSelectList, SqlTable leftTable, BasicColumn leftTableJoinColumn,
-                                                         Map<SqlTable, BasicColumn> rightTables, SelectDSLCompleter completer) {
+    public static SelectStatementProvider leftJoinSelect(BasicColumn[] joinSelectList, SqlTable leftTable,
+                                                         List<JoinDetail> joinDetails, SelectDSLCompleter completer) {
         QueryExpressionDSL<SelectModel> start = SqlBuilder.select(joinSelectList).from(leftTable);
-        rightTables.forEach((rightTable, joinColumn) -> start.leftJoin(rightTable).on(leftTableJoinColumn, equalTo(joinColumn)));
+        joinDetails.forEach(detail -> start.leftJoin(detail.getRightJoinTable())
+                .on(detail.getLeftTableJoinColumn(), equalTo(detail.getRightTableJoinColumn())));
         return MyBatis3Utils.select(start, completer);
     }
 }

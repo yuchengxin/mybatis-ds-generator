@@ -12,14 +12,14 @@ import java.util.Map;
 public class JoinConfig {
     private String targetPackage;
     private String targetProject;
-    private Map<String, JoinDetail> joinDetailMap;
+    private Map<String, JoinEntry> joinDetailMap;
 
-    public JoinDetail getJoinDetail(String tableName) {
-        JoinDetail joinDetail = joinDetailMap.get(tableName);
-        if (joinDetail != null) {
-            joinDetail.setTargetPackage(targetPackage);
-            joinDetail.setTargetProject(targetProject);
+    public JoinEntry getJoinEntry(String tableName) {
+        JoinEntry joinEntry = joinDetailMap.get(tableName);
+        if (joinEntry != null) {
+            joinEntry.setTargetPackage(targetPackage);
+            joinEntry.setTargetProject(targetProject);
         }
-        return joinDetail;
+        return joinEntry;
     }
 }

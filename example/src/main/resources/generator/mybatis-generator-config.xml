@@ -14,14 +14,11 @@
         <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
         <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
 
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
         <plugin type="com.catyee.generator.plugin.AnnotationPlugin"/>
         <plugin type="com.catyee.generator.plugin.JoinMethodPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
 
-        <commentGenerator type="com.catyee.generator.comment.NonCommentGenerator">
-            <property name="suppressAllComments" value="false" />
-            <property name="suppressDate" value="true"/>
-        </commentGenerator>
+        <commentGenerator type="com.catyee.generator.comment.NonCommentGenerator"/>
 
         <jdbcConnection
                 driverClass="org.h2.Driver"

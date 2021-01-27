@@ -36,4 +36,14 @@ public class NonCommentGenerator extends DefaultCommentGenerator {
     public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable,
                                    Set<FullyQualifiedJavaType> imports) {
     }
+
+    @Override
+    public void addGetterComment(Method method, IntrospectedTable introspectedTable,
+                                 IntrospectedColumn introspectedColumn) {
+    }
+
+    @Override
+    public void addSetterComment(Method method, IntrospectedTable introspectedTable,
+                                 IntrospectedColumn introspectedColumn) {
+    }
 }

@@ -1,7 +1,7 @@
 package com.catyee.generator.resolver;
 
 import com.catyee.generator.PlusXmlConfigParser;
-import com.catyee.generator.config.CustomTypeDetail;
+import com.catyee.generator.config.CustomTypeEntry;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.internal.types.JavaTypeResolverDefaultImpl;
@@ -20,32 +20,33 @@ public class JavaTypeCustomResolver extends JavaTypeResolverDefaultImpl {
 
         // 处理自定义的类型
         String columnName = introspectedColumn.getActualColumnName();
-        CustomTypeDetail customTypeDetail = PlusXmlConfigParser.getCustomTypeConfig().getCustomTypeDetail(columnName);
-        if (customTypeDetail != null) {
-            String className = customTypeDetail.getJavaType();
+        CustomTypeEntry customTypeEntry = PlusXmlConfigParser.getCustomTypeConfig().getCustomTypeDetail(columnName);
+        if (customTypeEntry != null) {
+            customTypeEntry.validate();
+            String className = customTypeEntry.getJavaType();
             if (className != null && !className.isEmpty()) {
                 answer = new FullyQualifiedJavaType(className);
-                if (customTypeDetail.getGenericTypes() != null) {
-                    for (String elementType : customTypeDetail.getGenericTypes()) {
+                if (customTypeEntry.getGenericTypes() != null) {
+                    for (String elementType : customTypeEntry.getGenericTypes()) {
                         FullyQualifiedJavaType elementFullType = new FullyQualifiedJavaType(elementType);
                         answer.addTypeArgument(elementFullType);
                     }
                 }
             }
 
-            if (stringHasValue(customTypeDetail.getJavaProperty())) {
-                introspectedColumn.setJavaProperty(customTypeDetail.getJavaProperty());
+            if (stringHasValue(customTypeEntry.getJavaProperty())) {
+                introspectedColumn.setJavaProperty(customTypeEntry.getJavaProperty());
             }
 
-            if (stringHasValue(customTypeDetail.getJdbcType())) {
-                introspectedColumn.setJdbcTypeName(customTypeDetail.getJdbcType());
+            if (stringHasValue(customTypeEntry.getJdbcType())) {
+                introspectedColumn.setJdbcTypeName(customTypeEntry.getJdbcType());
             }
 
-            if (stringHasValue(customTypeDetail.getTypeHandler())) {
-                introspectedColumn.setTypeHandler(customTypeDetail.getTypeHandler());
+            if (stringHasValue(customTypeEntry.getTypeHandler())) {
+                introspectedColumn.setTypeHandler(customTypeEntry.getTypeHandler());
             }
 
-            if (customTypeDetail.isDelimitedColumnName()) {
+            if (customTypeEntry.isDelimitedColumnName()) {
                 introspectedColumn.setColumnNameDelimited(true);
             }
         }

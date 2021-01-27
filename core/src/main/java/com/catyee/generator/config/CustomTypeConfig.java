@@ -10,9 +10,9 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 public class CustomTypeConfig {
-    private Map<String, CustomTypeDetail> customTypeDetailMap;
+    private Map<String, CustomTypeEntry> customTypeDetailMap;
 
-    public CustomTypeDetail getCustomTypeDetail(String column) {
+    public CustomTypeEntry getCustomTypeDetail(String column) {
         return customTypeDetailMap.get(column);
     }
 }

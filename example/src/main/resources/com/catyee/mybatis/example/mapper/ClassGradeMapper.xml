@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catyee.mybatis.example.mapper.ClassGradeMapper">
+  <resultMap id="JoinClassGradeResult" type="com.catyee.mybatis.example.model.ClassGrade">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="grade_type" jdbcType="VARCHAR" property="gradeType" />
+    <result column="regulator_id" jdbcType="BIGINT" property="regulatorId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+    <association javaType="com.catyee.mybatis.example.model.Teacher" property="regulator">
+      <id column="exam_teacher_id" jdbcType="BIGINT" property="id" />
+      <result column="exam_teacher_name" jdbcType="VARCHAR" property="name" />
+      <result column="exam_teacher_gender" jdbcType="VARCHAR" property="gender" />
+      <result column="exam_teacher_birthday" jdbcType="DATE" property="birthday" />
+      <result column="exam_teacher_work_seniority" jdbcType="INTEGER" property="workSeniority" />
+      <result column="exam_teacher_tech_courses" jdbcType="VARCHAR" property="techCourses" typeHandler="com.catyee.mybatis.example.custom.handler.StringListHandler" />
+      <result column="exam_teacher_create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="exam_teacher_last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+    </association>
+    <collection ofType="com.catyee.mybatis.example.model.Student" property="students">
+      <id column="exam_student_id" jdbcType="BIGINT" property="id" />
+      <result column="exam_student_grade_id" jdbcType="BIGINT" property="gradeId" />
+      <result column="exam_student_name" jdbcType="VARCHAR" property="name" />
+      <result column="exam_student_gender" jdbcType="VARCHAR" property="gender" />
+      <result column="exam_student_birthday" jdbcType="DATE" property="birthday" />
+      <result column="exam_student_take_courses" jdbcType="VARCHAR" property="takeCourses" typeHandler="com.catyee.mybatis.example.custom.handler.StringListHandler" />
+      <result column="exam_student_from_foreign" jdbcType="BOOLEAN" property="fromForeign" />
+      <result column="exam_student_hometown" jdbcType="VARCHAR" property="hometown" />
+      <result column="exam_student_create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="exam_student_last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+      <result column="exam_student_hobbies" jdbcType="CLOB" property="hobbies" typeHandler="com.catyee.mybatis.example.custom.handler.HobbyListHandler" />
+    </collection>
+  </resultMap>
+</mapper>

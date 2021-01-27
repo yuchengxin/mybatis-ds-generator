@@ -1,6 +1,7 @@
 package com.catyee.generator;
 
 import com.catyee.generator.config.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.mybatis.generator.config.xml.ParserEntityResolver;
@@ -33,10 +34,12 @@ public class PlusXmlConfigParser {
     private static final String CUSTOM_TYPE_CONFIG_ARG = "customTypeConfig";
     private static final String JOIN_TARGET_PROJECT_ARG = "targetProject";
     private static final String JOIN_TARGET_PACKAGE_ARG = "targetPackage";
-    private static final String JOIN_DETAIL_ARG = "joinDetail";
-    private static final String JOIN_TABLE_ARG = "tableName";
-    private static final String JOIN_COLUMN_ARG = "joinColumn";
-    private static final String JOIN_TARGET_TABLE_ARG = "targetTable";
+    private static final String JOIN_ENTRY_ARG = "joinEntry";
+    private static final String JOIN_LEFT_TABLE_ARG = "leftTable";
+    private static final String JOIN_LEFT_COLUMN_ARG = "leftTableColumn";
+    private static final String JOIN_RIGHT_TABLE_ARG = "rightTable";
+    private static final String JOIN_RIGHT_COLUMN_ARG = "rightTableColumn";
+    private static final String JOIN_TARGET_ARG = "joinTarget";
     private static final String JOIN_JAVA_PROPERTY_ARG = "property";
     private static final String JOIN_TYPE_ARG = "joinType";
 
@@ -150,7 +153,7 @@ public class PlusXmlConfigParser {
     }
 
     private static void parseJoinConfig(Node node) {
-        Map<String, JoinDetail> joinDetails = new HashMap<>();
+        Map<String, JoinEntry> joinDetails = new HashMap<>();
         Properties attributes = parseAttributes(node);
         String targetProject = attributes.getProperty(JOIN_TARGET_PROJECT_ARG); //$NON-NLS-1$
         String targetPackage = attributes.getProperty(JOIN_TARGET_PACKAGE_ARG); //$NON-NLS-1$
@@ -162,19 +165,18 @@ public class PlusXmlConfigParser {
                 continue;
             }
 
-            if (JOIN_DETAIL_ARG.equals(childNode.getNodeName())) { //$NON-NLS-1$
+            if (JOIN_ENTRY_ARG.equals(childNode.getNodeName())) { //$NON-NLS-1$
                 joinDetails.putAll(parseJoinDetail(childNode, targetProject, targetPackage));
             }
         }
         joinConfig = new JoinConfig(targetPackage, targetProject, joinDetails);
     }
 
-    private static Map<String, JoinDetail> parseJoinDetail(Node node, String targetProject, String targetPackage) {
+    private static Map<String, JoinEntry> parseJoinDetail(Node node, String targetProject, String targetPackage) {
         Properties attributes = parseAttributes(node);
-        String sourceTableName = attributes.getProperty(JOIN_TABLE_ARG); //$NON-NLS-1$
-        String joinColumn = attributes.getProperty(JOIN_COLUMN_ARG);
+        String leftTable = attributes.getProperty(JOIN_LEFT_TABLE_ARG); //$NON-NLS-1$
         NodeList nodeList = node.getChildNodes();
-        List<JoinTarget> targetTables = new ArrayList<>();
+        List<Pair<String, JoinTarget>> details = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
 
@@ -182,25 +184,26 @@ public class PlusXmlConfigParser {
                 continue;
             }
 
-            if (JOIN_TARGET_TABLE_ARG.equals(childNode.getNodeName())) { //$NON-NLS-1$
-                targetTables.add(parseJoinTarget(childNode));
+            if (JOIN_TARGET_ARG.equals(childNode.getNodeName())) { //$NON-NLS-1$
+                details.add(parseJoinDetail(childNode));
             }
         }
-        JoinDetail detail = new JoinDetail(sourceTableName, targetProject, targetPackage, joinColumn, targetTables);
-        return Collections.singletonMap(sourceTableName, detail);
+        JoinEntry detail = new JoinEntry(leftTable, targetProject, targetPackage, details);
+        return Collections.singletonMap(leftTable, detail);
     }
 
-    private static JoinTarget parseJoinTarget(Node node) {
+    private static Pair<String, JoinTarget> parseJoinDetail(Node node) {
         Properties attributes = parseAttributes(node);
-        String targetTableName = attributes.getProperty(JOIN_TABLE_ARG);
+        String leftTableColumn = attributes.getProperty(JOIN_LEFT_COLUMN_ARG);
+        String rightTable = attributes.getProperty(JOIN_RIGHT_TABLE_ARG);
         JoinTarget.JoinType joinType = JoinTarget.JoinType.valueOf(attributes.getProperty(JOIN_TYPE_ARG));
         String filedName = attributes.getProperty(JOIN_JAVA_PROPERTY_ARG);
-        String joinColumn = attributes.getProperty(JOIN_COLUMN_ARG);
-        return new JoinTarget(targetTableName, filedName, joinColumn, joinType);
+        String rightTableColumn = attributes.getProperty(JOIN_RIGHT_COLUMN_ARG);
+        return Pair.of(leftTableColumn, new JoinTarget(rightTable, filedName, rightTableColumn, joinType));
     }
 
     private static void parseCustomTypeConfig(Node node) {
-        Map<String, CustomTypeDetail> listTypeConfigMap = new HashMap<>();
+        Map<String, CustomTypeEntry> listTypeConfigMap = new HashMap<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);
@@ -216,7 +219,7 @@ public class PlusXmlConfigParser {
         customTypeConfig = new CustomTypeConfig(listTypeConfigMap);
     }
 
-    private static Map<String, CustomTypeDetail> parseCustomTypeDetailMap(Node node) {
+    private static Map<String, CustomTypeEntry> parseCustomTypeDetailMap(Node node) {
         Properties attributes = parseAttributes(node);
         String columnName = attributes.getProperty(CUSTOM_COLUMN_ARG);
         String javaType = attributes.getProperty(CUSTOM_JAVA_TYPE_ARG);
@@ -240,7 +243,7 @@ public class PlusXmlConfigParser {
             }
         }
         return Collections.singletonMap(columnName,
-                new CustomTypeDetail(columnName, javaType, javaProperty, jdbcType, typeHandler, Boolean.parseBoolean(isColumnNameDelimited), genericTypes)
+                new CustomTypeEntry(columnName, javaType, javaProperty, jdbcType, typeHandler, Boolean.parseBoolean(isColumnNameDelimited), genericTypes)
         );
     }
 
