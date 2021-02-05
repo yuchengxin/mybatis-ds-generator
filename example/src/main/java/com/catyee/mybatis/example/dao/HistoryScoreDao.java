@@ -4,12 +4,16 @@ import com.catyee.mybatis.example.custom.entity.ExamType;
 import com.catyee.mybatis.example.mapper.HistoryScoreDynamicSqlSupport;
 import com.catyee.mybatis.example.mapper.HistoryScoreMapper;
 import com.catyee.mybatis.example.model.HistoryScore;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.mybatis.dynamic.sql.update.UpdateDSL;
+import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
-import static com.catyee.mybatis.example.mapper.HistoryScoreDynamicSqlSupport.examType;
+import static com.catyee.mybatis.example.mapper.HistoryScoreDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Repository
@@ -34,6 +38,19 @@ public class HistoryScoreDao {
     public HistoryScore update(HistoryScore scores) {
         mapper.updateByPrimaryKey(scores);
         return scores;
+    }
+
+    // 示例:定制化更新的实现方式
+    public HistoryScore updateScore(long scoreId, Map<String, Integer> scores) {
+        int totalScore = scores.values().stream().mapToInt(s -> s).sum();
+        UpdateStatementProvider updateStatementProvider = UpdateDSL.update(historyScore)
+                .set(score).equalTo(scores)
+                .set(HistoryScoreDynamicSqlSupport.totalScore).equalTo(totalScore)
+                .where(id, isEqualTo(scoreId))
+                .build()
+                .render(RenderingStrategies.MYBATIS3);
+        mapper.update(updateStatementProvider);
+        return mapper.selectByPrimaryKey(scoreId).orElse(null);
     }
 
     public void delete(long id) {

@@ -2,7 +2,13 @@
 <!DOCTYPE generatorPlusConfiguration
         PUBLIC "-//mybatis.org//DTD MyBatis Generator plus Configuration //EN"
         "https://document-1303021898.cos.ap-shanghai.myqcloud.com/mybatis-ds-generator-config_1_0.dtd">
+
+<!--Mybatis DS Generator配置文件-->
 <generatorPlusConfiguration>
+    <!--自定义关联关系, 对应的join sql为: -->
+    <!--select ... from exam_class_grade g left join exam_student s on g.id=s.grade_id left join exam_teacher t on g.regulator_id=t.id -->
+    <!--由于无法以注解方式生成join关系的ResultSet, 所以目前仍然以xml形式保存ResultSet定义-->
+    <!--xml生成路径为targetProject/targetPackage, 其中targetProject需要目录已存在, targetPackage如果不存在会自动生成-->
     <joinConfig targetPackage="com.catyee.mybatis.example.mapper" targetProject="src/main/resources">
         <joinEntry leftTable="exam_class_grade">
             <joinTarget rightTable="exam_student" property="students" leftTableColumn="id" rightTableColumn="grade_id" joinType="MORE"/>
@@ -10,6 +16,7 @@
         </joinEntry>
     </joinConfig>
 
+    <!--自定义类型-->
     <customTypeConfig>
         <customType columnName="grade_type" javaType="com.catyee.mybatis.example.custom.entity.GradeType"/>
         <customType columnName="gender" javaType="com.catyee.mybatis.example.custom.entity.Gender"/>

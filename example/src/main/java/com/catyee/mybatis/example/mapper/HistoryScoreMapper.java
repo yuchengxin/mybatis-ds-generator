@@ -37,7 +37,7 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface HistoryScoreMapper {
-    BasicColumn[] selectList = BasicColumn.columnList(id, studentId, examTime, examType, createTime, lastUpdateTime, score);
+    BasicColumn[] selectList = BasicColumn.columnList(id, studentId, examTime, examType, totalScore, createTime, lastUpdateTime, score);
 
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
@@ -69,6 +69,7 @@ public interface HistoryScoreMapper {
         @Result(column="student_id", property="studentId", jdbcType=JdbcType.BIGINT),
         @Result(column="exam_time", property="examTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="exam_type", property="examType", jdbcType=JdbcType.VARCHAR),
+        @Result(column="total_score", property="totalScore", jdbcType=JdbcType.INTEGER),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="last_update_time", property="lastUpdateTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="score", property="score", typeHandler=ScoreMapHandler.class, jdbcType=JdbcType.CLOB)
@@ -97,6 +98,7 @@ public interface HistoryScoreMapper {
             c.map(studentId).toProperty("studentId")
             .map(examTime).toProperty("examTime")
             .map(examType).toProperty("examType")
+            .map(totalScore).toProperty("totalScore")
             .map(score).toProperty("score")
         );
     }
@@ -106,6 +108,7 @@ public interface HistoryScoreMapper {
             c.map(studentId).toProperty("studentId")
             .map(examTime).toProperty("examTime")
             .map(examType).toProperty("examType")
+            .map(totalScore).toProperty("totalScore")
             .map(score).toProperty("score")
         );
     }
@@ -115,6 +118,7 @@ public interface HistoryScoreMapper {
             c.map(studentId).toPropertyWhenPresent("studentId", record::getStudentId)
             .map(examTime).toPropertyWhenPresent("examTime", record::getExamTime)
             .map(examType).toPropertyWhenPresent("examType", record::getExamType)
+            .map(totalScore).toPropertyWhenPresent("totalScore", record::getTotalScore)
             .map(score).toPropertyWhenPresent("score", record::getScore)
         );
     }
@@ -145,6 +149,7 @@ public interface HistoryScoreMapper {
         return dsl.set(studentId).equalTo(record::getStudentId)
                 .set(examTime).equalTo(record::getExamTime)
                 .set(examType).equalTo(record::getExamType)
+                .set(totalScore).equalTo(record::getTotalScore)
                 .set(score).equalTo(record::getScore);
     }
 
@@ -152,6 +157,7 @@ public interface HistoryScoreMapper {
         return dsl.set(studentId).equalToWhenPresent(record::getStudentId)
                 .set(examTime).equalToWhenPresent(record::getExamTime)
                 .set(examType).equalToWhenPresent(record::getExamType)
+                .set(totalScore).equalToWhenPresent(record::getTotalScore)
                 .set(score).equalToWhenPresent(record::getScore);
     }
 
@@ -160,6 +166,7 @@ public interface HistoryScoreMapper {
             c.set(studentId).equalTo(record::getStudentId)
             .set(examTime).equalTo(record::getExamTime)
             .set(examType).equalTo(record::getExamType)
+            .set(totalScore).equalTo(record::getTotalScore)
             .set(score).equalTo(record::getScore)
             .where(id, isEqualTo(record::getId))
         );
@@ -170,6 +177,7 @@ public interface HistoryScoreMapper {
             c.set(studentId).equalToWhenPresent(record::getStudentId)
             .set(examTime).equalToWhenPresent(record::getExamTime)
             .set(examType).equalToWhenPresent(record::getExamType)
+            .set(totalScore).equalToWhenPresent(record::getTotalScore)
             .set(score).equalToWhenPresent(record::getScore)
             .where(id, isEqualTo(record::getId))
         );

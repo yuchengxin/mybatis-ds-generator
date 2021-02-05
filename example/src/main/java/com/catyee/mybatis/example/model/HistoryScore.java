@@ -22,6 +22,8 @@ public class HistoryScore implements Serializable {
 
     private ExamType examType;
 
+    private Integer totalScore;
+
     private LocalDateTime createTime;
 
     private LocalDateTime lastUpdateTime;

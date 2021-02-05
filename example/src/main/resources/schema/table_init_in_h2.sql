@@ -58,9 +58,10 @@ CREATE TABLE IF NOT EXISTS `exam_history_score`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
     `student_id`       BIGINT(10)   NOT NULL,
-    `score`            TEXT         NOT NULL,
     `exam_time`        DATETIME     NOT NULL,
     `exam_type`        VARCHAR(20)  NOT NULL,
+    `total_score`      INT(10)      NOT NULL,
+    `score`            TEXT         NOT NULL,
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

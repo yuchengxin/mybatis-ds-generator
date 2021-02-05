@@ -4,8 +4,10 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"
         >
 
+<!--Mybatis Generator配置文件-->
 <generatorConfiguration>
 
+    <!--如果使用Mybatis DS Generator, targetRuntime只能指定为MyBatis3DynamicSql-->
     <context id="MysqlContext" defaultModelType="flat" targetRuntime="MyBatis3DynamicSql">
         <property name="autoDelimitKeywords" value="true"/>
         <property name="beginningDelimiter" value="`"/>
@@ -14,12 +16,16 @@
         <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
         <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
 
+        <!--指定需要使用的plugin, AnnotationPlugin用于生成lombok注解, JoinMethodPlugin用于生成关联关系-->
+        <!--plugin之间存在顺序关系, 为了生成代码的美观, 建议将SerializablePlugin放到最后-->
         <plugin type="com.catyee.generator.plugin.AnnotationPlugin"/>
         <plugin type="com.catyee.generator.plugin.JoinMethodPlugin"/>
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
 
+        <!--不生成任何注释-->
         <commentGenerator type="com.catyee.generator.comment.NonCommentGenerator"/>
 
+        <!--指定Mybatis Generator运行时连接的数据库, 这里选用h2内存数据库-->
         <jdbcConnection
                 driverClass="org.h2.Driver"
                 connectionURL="jdbc:h2:mem:example;database_to_upper=false;MODE=MySQL;"
@@ -27,11 +33,14 @@
                 password="123"
         />
 
+        <!--指定java类型处理器, 如果有自定义的类型, 需要进行指定-->
         <javaTypeResolver type="com.catyee.generator.resolver.JavaTypeCustomResolver">
             <property name="forceBigDecimals" value="false"/>
             <property name="useJSR310Types" value="true"/>
         </javaTypeResolver>
 
+        <!--Model类的生成配置-->
+        <!--路径是targetProject/targetPackage, targetProject必须已经存在, 如果指定为MAVEN则使用pom文件中outputDirectory定义的位置-->
         <javaModelGenerator targetPackage="com.catyee.mybatis.example.model" targetProject="MAVEN">
             <property name="constructorBased" value="false"/>
             <property name="enableSubPackages" value="false"/>
@@ -39,6 +48,7 @@
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
+        <!--Mapper类的生成配置-->
         <javaClientGenerator targetPackage="com.catyee.mybatis.example.mapper" targetProject="MAVEN" >
             <property name="enableSubPackages" value="false"/>
             <property name="exampleMethodVisibility" value="public"/>
@@ -46,9 +56,19 @@
             <property name="useLegacyBuilder" value="false"/>
         </javaClientGenerator>
 
+        <!--指定需要扫描的表, table标签可以有多个, 甚至可以逐表配置, 也可以统一配置-->
+        <!--注意：由于使用了h2的内存模式, 系统表和用户表放在一起, 所以用户表一定要有一种方式能够区分, 否则系统表也会生成Model和Mapper类-->
+        <!--例子中用户表都以exam开头命名, 所以过滤出所有exam开头的表就可以了-->
+        <!--注意：table标签中还可以指定catalog和schema,但是h2和mysql的catalog/schema概念并不一致, 所以不能指定, 否则生成的mapper类只能用于h2-->
         <table tableName="exam%" >
+            <!--generatedKey标签用于指定主键-->
             <generatedKey column="id" sqlStatement="JDBC" />
+            <!--domainObjectRenamingRule用于统一对表名做处理：
+            为了区分系统表和用户表, 我们将用户表统一都以exam开头, 但是我在生存Model和Mapper类的时候不希望java类也都以Exam开头, 显得不够简洁,
+            这时候就可以在domainObjectRenamingRule中配置将Exam替换为空(或者其他字符串), 注意这里要大写开头-->
             <domainObjectRenamingRule searchString="^Exam" replaceString=""/>
+            <!--指定create_time和last_update_time不用生成到插入语句和更新语句当中, 这样在我们插入和更新的时候会忽略这两个字段,
+            因为这两个字段我们希望数据库自动处理(而不是程序处理): create_time在创建的时候自动填入数值, 而last_update_time在每次更新的时候自动更新数值-->
             <columnOverride column="create_time" isGeneratedAlways="true"/>
             <columnOverride column="last_update_time" isGeneratedAlways="true"/>
         </table>

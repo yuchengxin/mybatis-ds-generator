@@ -18,6 +18,8 @@ public final class HistoryScoreDynamicSqlSupport {
 
     public static final SqlColumn<ExamType> examType = historyScore.examType;
 
+    public static final SqlColumn<Integer> totalScore = historyScore.totalScore;
+
     public static final SqlColumn<LocalDateTime> createTime = historyScore.createTime;
 
     public static final SqlColumn<LocalDateTime> lastUpdateTime = historyScore.lastUpdateTime;
@@ -32,6 +34,8 @@ public final class HistoryScoreDynamicSqlSupport {
         public final SqlColumn<LocalDateTime> examTime = column("exam_time", JDBCType.TIMESTAMP);
 
         public final SqlColumn<ExamType> examType = column("exam_type", JDBCType.VARCHAR);
+
+        public final SqlColumn<Integer> totalScore = column("total_score", JDBCType.INTEGER);
 
         public final SqlColumn<LocalDateTime> createTime = column("create_time", JDBCType.TIMESTAMP);
 

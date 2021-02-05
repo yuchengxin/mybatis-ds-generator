@@ -14,6 +14,7 @@
     <description>mybatis dynamic sql generator plus example</description>
 
     <dependencies>
+        <!--引入Mybatis DS Generator的依赖-->
         <dependency>
             <groupId>com.catyee.mybatis</groupId>
             <artifactId>ds-generator-core</artifactId>
@@ -58,24 +59,30 @@
     </dependencies>
 
     <properties>
+        <!--mybatis generator配置文件的位置-->
         <generator.config>${basedir}/src/main/resources//generator/mybatis-generator-config.xml</generator.config>
+        <!--mybatis ds generator配置文件的位置-->
         <mybatis.ds.generator.config>${basedir}/src/main/resources/generator/ds-generator-config.xml</mybatis.ds.generator.config>
     </properties>
 
     <build>
         <plugins>
+            <!--使用mybatis generator插件-->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>${mybatis.generator.version}</version>
                 <configuration>
                     <verbose>true</verbose>
+                    <!--每次生成覆盖原有的内容-->
                     <overwrite>true</overwrite>
+                    <!--指定mybatis generator配置文件中要读取的context-->
                     <contexts>MysqlContext</contexts>
                     <configurationFile>${generator.config}</configurationFile>
                     <outputDirectory>${basedir}/src/main/java</outputDirectory>
                     <includeCompileDependencies>true</includeCompileDependencies>
                     <includeAllDependencies>true</includeAllDependencies>
+                    <!--在开始生成Model和Mapper之前初始化h2数据库，以sql文件的方式初始化-->
                     <sqlScript>${basedir}/src/main/resources/schema/table_init_in_h2.sql</sqlScript>
                     <jdbcURL>jdbc:h2:mem:example;database_to_upper=false;MODE=MySQL;DB_CLOSE_DELAY=-1</jdbcURL>
                     <jdbcDriver>org.h2.Driver</jdbcDriver>
@@ -83,6 +90,7 @@
                     <jdbcPassword>123</jdbcPassword>
                 </configuration>
                 <dependencies>
+                    <!--引入h2数据库和Mybatis DS Generator的依赖-->
                     <dependency>
                         <groupId>com.h2database</groupId >
                         <artifactId>h2</artifactId>

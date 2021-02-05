@@ -63,20 +63,26 @@ public class JUnitDaoWithFraud extends JUnitDaoBase {
     }
 
     public HistoryScore fraudHistoryScore(long studentId) {
+        Map<String, Integer> scores = fraudScore();
+        int totalScore = scores.values().stream().mapToInt(s -> s).sum();
         return HistoryScore.builder()
                 .studentId(studentId)
                 .examType(ExamType.FINAL_EXAM)
                 .examTime(LocalDateTime.now().plusMonths(-5))
-                .score(fraudScore())
+                .score(scores)
+                .totalScore(totalScore)
                 .build();
     }
 
     public HistoryScore fraudHistoryScore() {
+        Map<String, Integer> scores = fraudScore();
+        int totalScore = scores.values().stream().mapToInt(s -> s).sum();
         return HistoryScore.builder()
                 .studentId(1L)
                 .examType(ExamType.FINAL_EXAM)
                 .examTime(LocalDateTime.now().plusMonths(-5))
-                .score(fraudScore())
+                .score(scores)
+                .totalScore(totalScore)
                 .build();
     }
 

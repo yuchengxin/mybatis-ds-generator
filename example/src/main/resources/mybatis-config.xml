@@ -7,7 +7,12 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+    <!--显示执行的sql以及sql执行时间, 用于debug, 在生产环境中建议关掉-->
     <plugins>
         <plugin interceptor="com.catyee.generator.utils.ShowSqlInterceptor"/>
     </plugins>
+    <mappers>
+        <package name="com.catyee.mybatis.example.mapper"/>
+        <package name="com.catyee.mybatis.example.custom.mapper"/>
+    </mappers>
 </configuration>
