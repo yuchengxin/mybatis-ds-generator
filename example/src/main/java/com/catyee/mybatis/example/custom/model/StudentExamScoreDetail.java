@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 自定义的Model类
+ */
 @Data
 @Builder
 @AllArgsConstructor
