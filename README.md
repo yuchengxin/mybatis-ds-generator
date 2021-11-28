@@ -168,7 +168,8 @@ Mybatis Generator可以在table标签下通过columnOverride的子标签对特�
 ```
 
 ### 2.1.5 扩展了多表操作的工具类
- 扩展了join、groupBy、对查询语句count等常见的操作，直接调用即可，更加方便地实现Dao层逻辑。
+ 新增了MyBatis3CustomUtils工具类，工具类中扩展了join、groupBy、查询语句count、分页等常见的操作，直接调用即可，更加方便地实现Dao层逻辑。
+ 新增了对insert ignore into语法的支持（需要数据库支持才能使用）
 
 ### 2.1.6 显示完整sql和执行时间
 Mybatis在debug级别下也可以显示sql但是显示的是带有占位符的sql，填充占位符的参数是另外显示的，分成了两个部分，查看起来不直观、不友好。所以Mybatis DS Generator实现了显示完整sql的插件，并且能够显示sql执行时间，方便找出慢sql。该插件和上面列举的其它插件不一样，上面列举的其它插件都是mybatis generator的插件，该插件是mybatis的插件。使用方式:
@@ -185,7 +186,7 @@ Mybatis在debug级别下也可以显示sql但是显示的是带有占位符的sq
 <dependency>
     <groupId>com.catyee.mybatis</groupId>
     <artifactId>ds-generator-core</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 Mybatis3 DS Generator依赖Java8，所以JDK至少要是1.8以上版本。Mybatis DS Generator主要依赖了如下第三方包：

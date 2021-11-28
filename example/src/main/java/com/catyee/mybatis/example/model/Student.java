@@ -22,6 +22,8 @@ public class Student implements Serializable {
 
     private String name;
 
+    private String cardNum;
+
     private Gender gender;
 
     private LocalDate birthday;

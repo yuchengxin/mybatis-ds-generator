@@ -12,6 +12,7 @@
     <association javaType="com.catyee.mybatis.example.model.Teacher" property="regulator">
       <id column="exam_teacher_id" jdbcType="BIGINT" property="id" />
       <result column="exam_teacher_name" jdbcType="VARCHAR" property="name" />
+      <result column="exam_teacher_card_num" jdbcType="VARCHAR" property="cardNum" />
       <result column="exam_teacher_gender" jdbcType="VARCHAR" property="gender" />
       <result column="exam_teacher_birthday" jdbcType="DATE" property="birthday" />
       <result column="exam_teacher_work_seniority" jdbcType="INTEGER" property="workSeniority" />
@@ -23,6 +24,7 @@
       <id column="exam_student_id" jdbcType="BIGINT" property="id" />
       <result column="exam_student_grade_id" jdbcType="BIGINT" property="gradeId" />
       <result column="exam_student_name" jdbcType="VARCHAR" property="name" />
+      <result column="exam_student_card_num" jdbcType="VARCHAR" property="cardNum" />
       <result column="exam_student_gender" jdbcType="VARCHAR" property="gender" />
       <result column="exam_student_birthday" jdbcType="DATE" property="birthday" />
       <result column="exam_student_take_courses" jdbcType="VARCHAR" property="takeCourses" typeHandler="com.catyee.mybatis.example.custom.handler.StringListHandler" />

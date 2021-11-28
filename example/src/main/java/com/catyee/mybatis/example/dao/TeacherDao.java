@@ -53,10 +53,17 @@ public class TeacherDao {
         return mapper.select(c -> MyBatis3CustomUtils.buildLimitOffset(c, limit, offset));
     }
 
-    public List<Teacher> getGreatWorkSeniorityTeacher(int seniority, Long limit, Long offset) {
+    /**
+     * 使用分页示例，page必须从1开始，size必须大于0
+     * @param seniority
+     * @param page
+     * @param size
+     * @return
+     */
+    public List<Teacher> pageGreatWorkSeniorityTeacher(int seniority, Integer page, Integer size) {
         return mapper.select(c -> {
             c.where(workSeniority, isGreaterThan(seniority));
-            return MyBatis3CustomUtils.buildLimitOffset(c, limit, offset);
+            return MyBatis3CustomUtils.buildPagination(c, page, size);
         });
     }
 }

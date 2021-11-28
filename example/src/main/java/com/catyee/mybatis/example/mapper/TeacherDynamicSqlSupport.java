@@ -15,6 +15,8 @@ public final class TeacherDynamicSqlSupport {
 
     public static final SqlColumn<String> name = teacher.name;
 
+    public static final SqlColumn<String> cardNum = teacher.cardNum;
+
     public static final SqlColumn<Gender> gender = teacher.gender;
 
     public static final SqlColumn<LocalDate> birthday = teacher.birthday;
@@ -31,6 +33,8 @@ public final class TeacherDynamicSqlSupport {
         public final SqlColumn<Long> id = column("id", JDBCType.BIGINT);
 
         public final SqlColumn<String> name = column("`name`", JDBCType.VARCHAR);
+
+        public final SqlColumn<String> cardNum = column("card_num", JDBCType.VARCHAR);
 
         public final SqlColumn<Gender> gender = column("gender", JDBCType.VARCHAR);
 

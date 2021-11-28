@@ -6,10 +6,10 @@ DROP TABLE IF EXISTS `exam_history_score`;
 CREATE TABLE IF NOT EXISTS `exam_class_grade`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
-    `name`             VARCHAR(100) NOT NULL,
-    `description`      VARCHAR(255) NULL        DEFAULT NULL,
-    `grade_type`       VARCHAR(20)  NOT NULL,
-    `regulator_id`     BIGINT(10)   NOT NULL,
+    `name`             VARCHAR(100) NOT NULL,                                /* 班级名 */
+    `description`      VARCHAR(255) NULL        DEFAULT NULL,                /* 班级描述 */
+    `grade_type`       VARCHAR(20)  NOT NULL,                                /* 班级类型：上午班、下午班、全天班 */
+    `regulator_id`     BIGINT(10)   NOT NULL,                                /* 班主任的id */
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -21,11 +21,12 @@ CREATE TABLE IF NOT EXISTS `exam_class_grade`
 CREATE TABLE IF NOT EXISTS `exam_teacher`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
-    `name`             VARCHAR(100) NOT NULL,
-    `gender`           VARCHAR(20)  NOT NULL,
-    `birthday`         DATE         NULL        DEFAULT NULL,
-    `work_seniority`   INT          NOT NULL,
-    `tech_courses`     VARCHAR(255) NULL        DEFAULT NULL,
+    `name`             VARCHAR(100) NOT NULL,                                 /* 教师名 */
+    `card_num`         VARCHAR(50)  NOT NULL    UNIQUE,                       /* 身份证号，唯一键 */
+    `gender`           VARCHAR(20)  NOT NULL,                                 /* 性别 */
+    `birthday`         DATE         NULL        DEFAULT NULL,                 /* 生日 */
+    `work_seniority`   INT          NOT NULL,                                 /* 教龄 */
+    `tech_courses`     VARCHAR(255) NULL        DEFAULT NULL,                 /* 教授的课程列表，双逗号分割 */
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -38,14 +39,15 @@ CREATE TABLE IF NOT EXISTS `exam_teacher`
 CREATE TABLE IF NOT EXISTS `exam_student`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
-    `grade_id`         BIGINT(10)   NOT NULL,
-    `name`             VARCHAR(100) NOT NULL,
-    `gender`           VARCHAR(20)  NOT NULL,
-    `birthday`         DATE         NULL        DEFAULT NULL,
-    `take_courses`     VARCHAR(255) NOT NULL,
-    `from_foreign`     BOOLEAN      NOT NULL,
-    `hometown`         VARCHAR(100) NULL        DEFAULT NULL,
-    `hobbies`          TEXT         NULL        DEFAULT NULL,
+    `grade_id`         BIGINT(10)   NOT NULL,                                  /* 班级id */
+    `name`             VARCHAR(100) NOT NULL,                                  /* 学生姓名 */
+    `card_num`         VARCHAR(50)  NOT NULL    UNIQUE,                        /* 身份证号，唯一键 */
+    `gender`           VARCHAR(20)  NOT NULL,                                  /* 性别 */
+    `birthday`         DATE         NULL        DEFAULT NULL,                  /* 生日 */
+    `take_courses`     VARCHAR(255) NOT NULL,                                  /* 报名的课程列表 */
+    `from_foreign`     BOOLEAN      NOT NULL,                                  /* 是否是国外学生 */
+    `hometown`         VARCHAR(100) NULL        DEFAULT NULL,                  /* 家乡 */
+    `hobbies`          TEXT         NULL        DEFAULT NULL,                  /* 兴趣列表，存储的是json字符串 */
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -57,11 +59,11 @@ CREATE TABLE IF NOT EXISTS `exam_student`
 CREATE TABLE IF NOT EXISTS `exam_history_score`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
-    `student_id`       BIGINT(10)   NOT NULL,
-    `exam_time`        DATETIME     NOT NULL,
-    `exam_type`        VARCHAR(20)  NOT NULL,
-    `total_score`      INT(10)      NOT NULL,
-    `score`            TEXT         NOT NULL,
+    `student_id`       BIGINT(10)   NOT NULL,                                  /* 学生id */
+    `exam_time`        DATETIME     NOT NULL,                                  /* 考试时间 */
+    `exam_type`        VARCHAR(20)  NOT NULL,                                  /* 考试类型 */
+    `total_score`      INT(10)      NOT NULL,                                  /* 总分 */
+    `score`            TEXT         NOT NULL,                                  /* 科目成绩详情 */
     `create_time`      DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     `last_update_time` DATETIME     NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

@@ -82,10 +82,10 @@ public class TeacherDaoTest extends JUnitDaoWithFraud {
 
     @Test
     public void getGreatWorkSeniorityTeacher() {
-        List<Teacher> teachers = teacherDao.getGreatWorkSeniorityTeacher(tc.getWorkSeniority() - 1,
-                null, null);
+        List<Teacher> teachers = teacherDao.pageGreatWorkSeniorityTeacher(tc.getWorkSeniority() - 1,
+                1, 10);
         assertTrue(teachers.size() >= 1);
-        List<Teacher> ttls = teacherDao.getGreatWorkSeniorityTeacher(tc.getWorkSeniority() + 1,
+        List<Teacher> ttls = teacherDao.pageGreatWorkSeniorityTeacher(tc.getWorkSeniority() + 1,
                 null, null);
         assertTrue(ttls.isEmpty());
     }

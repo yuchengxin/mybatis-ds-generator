@@ -37,7 +37,7 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface TeacherMapper {
-    BasicColumn[] selectList = BasicColumn.columnList(id, name, gender, birthday, workSeniority, techCourses, createTime, lastUpdateTime);
+    BasicColumn[] selectList = BasicColumn.columnList(id, name, cardNum, gender, birthday, workSeniority, techCourses, createTime, lastUpdateTime);
 
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
@@ -67,6 +67,7 @@ public interface TeacherMapper {
     @Results(id="TeacherResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="card_num", property="cardNum", jdbcType=JdbcType.VARCHAR),
         @Result(column="gender", property="gender", jdbcType=JdbcType.VARCHAR),
         @Result(column="birthday", property="birthday", jdbcType=JdbcType.DATE),
         @Result(column="work_seniority", property="workSeniority", jdbcType=JdbcType.INTEGER),
@@ -96,6 +97,7 @@ public interface TeacherMapper {
     default int insert(Teacher record) {
         return MyBatis3Utils.insert(this::insert, record, teacher, c ->
             c.map(name).toProperty("name")
+            .map(cardNum).toProperty("cardNum")
             .map(gender).toProperty("gender")
             .map(birthday).toProperty("birthday")
             .map(workSeniority).toProperty("workSeniority")
@@ -106,6 +108,7 @@ public interface TeacherMapper {
     default int insertMultiple(Collection<Teacher> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, teacher, c ->
             c.map(name).toProperty("name")
+            .map(cardNum).toProperty("cardNum")
             .map(gender).toProperty("gender")
             .map(birthday).toProperty("birthday")
             .map(workSeniority).toProperty("workSeniority")
@@ -116,6 +119,7 @@ public interface TeacherMapper {
     default int insertSelective(Teacher record) {
         return MyBatis3Utils.insert(this::insert, record, teacher, c ->
             c.map(name).toPropertyWhenPresent("name", record::getName)
+            .map(cardNum).toPropertyWhenPresent("cardNum", record::getCardNum)
             .map(gender).toPropertyWhenPresent("gender", record::getGender)
             .map(birthday).toPropertyWhenPresent("birthday", record::getBirthday)
             .map(workSeniority).toPropertyWhenPresent("workSeniority", record::getWorkSeniority)
@@ -147,6 +151,7 @@ public interface TeacherMapper {
 
     static UpdateDSL<UpdateModel> updateAllColumns(Teacher record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(name).equalTo(record::getName)
+                .set(cardNum).equalTo(record::getCardNum)
                 .set(gender).equalTo(record::getGender)
                 .set(birthday).equalTo(record::getBirthday)
                 .set(workSeniority).equalTo(record::getWorkSeniority)
@@ -155,6 +160,7 @@ public interface TeacherMapper {
 
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Teacher record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(name).equalToWhenPresent(record::getName)
+                .set(cardNum).equalToWhenPresent(record::getCardNum)
                 .set(gender).equalToWhenPresent(record::getGender)
                 .set(birthday).equalToWhenPresent(record::getBirthday)
                 .set(workSeniority).equalToWhenPresent(record::getWorkSeniority)
@@ -164,6 +170,7 @@ public interface TeacherMapper {
     default int updateByPrimaryKey(Teacher record) {
         return update(c ->
             c.set(name).equalTo(record::getName)
+            .set(cardNum).equalTo(record::getCardNum)
             .set(gender).equalTo(record::getGender)
             .set(birthday).equalTo(record::getBirthday)
             .set(workSeniority).equalTo(record::getWorkSeniority)
@@ -175,6 +182,7 @@ public interface TeacherMapper {
     default int updateByPrimaryKeySelective(Teacher record) {
         return update(c ->
             c.set(name).equalToWhenPresent(record::getName)
+            .set(cardNum).equalToWhenPresent(record::getCardNum)
             .set(gender).equalToWhenPresent(record::getGender)
             .set(birthday).equalToWhenPresent(record::getBirthday)
             .set(workSeniority).equalToWhenPresent(record::getWorkSeniority)

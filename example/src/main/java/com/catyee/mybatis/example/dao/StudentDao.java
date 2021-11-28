@@ -1,5 +1,6 @@
 package com.catyee.mybatis.example.dao;
 
+import com.catyee.mybatis.example.custom.mapper.StudentCustomMapper;
 import com.catyee.mybatis.example.mapper.StudentDynamicSqlSupport;
 import com.catyee.mybatis.example.mapper.StudentMapper;
 import com.catyee.mybatis.example.model.Student;
@@ -19,10 +20,12 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 public class StudentDao {
 
     private final StudentMapper mapper;
+    private final StudentCustomMapper customMapper;
 
     @Autowired
-    public StudentDao(StudentMapper mapper) {
+    public StudentDao(StudentMapper mapper, StudentCustomMapper customMapper) {
         this.mapper = mapper;
+        this.customMapper = customMapper;
     }
 
     public Student create(Student student) {
@@ -33,6 +36,25 @@ public class StudentDao {
     public List<Student> batchCreate(List<Student> students) {
         mapper.insertMultiple(students);
         return students;
+    }
+
+    /**
+     * 演示 insert ignore into用法
+     * @param student
+     * @return
+     */
+    public boolean createIfNotExist(Student student) {
+        int count = customMapper.ignoreInsert(student);
+        return count > 0;
+    }
+
+    /**
+     * 演示 insert ignore into用法
+     * @param students
+     * @return
+     */
+    public int batchCreateIfNotExist(List<Student> students) {
+        return customMapper.ignoreInsertMultiple(students);
     }
 
     public Student update(Student student) {

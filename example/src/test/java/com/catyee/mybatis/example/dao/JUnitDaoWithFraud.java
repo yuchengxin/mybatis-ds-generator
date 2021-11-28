@@ -29,6 +29,7 @@ public class JUnitDaoWithFraud extends JUnitDaoBase {
     public Student fraudStudent(long gradeId) {
         return Student.builder()
                 .name(fraudUnique("student"))
+                .cardNum(fraudUnique("card_id"))
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.now().plusYears(-18))
                 .fromForeign(fraudRandom(0, 1) != 0)
@@ -42,6 +43,7 @@ public class JUnitDaoWithFraud extends JUnitDaoBase {
     public Student fraudStudent() {
         return Student.builder()
                 .name(fraudUnique("student"))
+                .cardNum(fraudUnique("card_id"))
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.now().plusYears(-18))
                 .fromForeign(fraudRandom(0, 1) != 0)
@@ -55,6 +57,7 @@ public class JUnitDaoWithFraud extends JUnitDaoBase {
     public Teacher fraudTeacher() {
         return Teacher.builder()
                 .name(fraudUnique("teacher"))
+                .cardNum(fraudUnique("card_id"))
                 .gender(Gender.MALE)
                 .birthday(LocalDate.now().plusYears(-25))
                 .techCourses(fraudStringList("course"))

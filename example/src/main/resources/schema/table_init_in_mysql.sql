@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `exam_teacher`
 (
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
     `name`             VARCHAR(100) NOT NULL,
+    `card_num`         VARCHAR(50)  NOT NULL    UNIQUE,
     `gender`           VARCHAR(20)  NOT NULL,
     `birthday`         DATE         NULL        DEFAULT NULL,
     `work_seniority`   INT          NOT NULL,
@@ -40,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `exam_student`
     `id`               BIGINT(10)   NOT NULL    AUTO_INCREMENT,
     `grade_id`         BIGINT(10)   NOT NULL,
     `name`             VARCHAR(100) NOT NULL,
+    `card_num`         VARCHAR(50)  NOT NULL    UNIQUE,
     `gender`           VARCHAR(20)  NOT NULL,
     `birthday`         DATE         NULL        DEFAULT NULL,
     `take_courses`     VARCHAR(255) NOT NULL,

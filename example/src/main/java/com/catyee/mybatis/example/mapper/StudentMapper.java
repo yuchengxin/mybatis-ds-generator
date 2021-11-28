@@ -38,7 +38,7 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface StudentMapper {
-    BasicColumn[] selectList = BasicColumn.columnList(id, gradeId, name, gender, birthday, takeCourses, fromForeign, hometown, createTime, lastUpdateTime, hobbies);
+    BasicColumn[] selectList = BasicColumn.columnList(id, gradeId, name, cardNum, gender, birthday, takeCourses, fromForeign, hometown, createTime, lastUpdateTime, hobbies);
 
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
@@ -69,6 +69,7 @@ public interface StudentMapper {
         @Result(column="id", property="id", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="grade_id", property="gradeId", jdbcType=JdbcType.BIGINT),
         @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="card_num", property="cardNum", jdbcType=JdbcType.VARCHAR),
         @Result(column="gender", property="gender", jdbcType=JdbcType.VARCHAR),
         @Result(column="birthday", property="birthday", jdbcType=JdbcType.DATE),
         @Result(column="take_courses", property="takeCourses", typeHandler=StringListHandler.class, jdbcType=JdbcType.VARCHAR),
@@ -101,6 +102,7 @@ public interface StudentMapper {
         return MyBatis3Utils.insert(this::insert, record, student, c ->
             c.map(gradeId).toProperty("gradeId")
             .map(name).toProperty("name")
+            .map(cardNum).toProperty("cardNum")
             .map(gender).toProperty("gender")
             .map(birthday).toProperty("birthday")
             .map(takeCourses).toProperty("takeCourses")
@@ -114,6 +116,7 @@ public interface StudentMapper {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, student, c ->
             c.map(gradeId).toProperty("gradeId")
             .map(name).toProperty("name")
+            .map(cardNum).toProperty("cardNum")
             .map(gender).toProperty("gender")
             .map(birthday).toProperty("birthday")
             .map(takeCourses).toProperty("takeCourses")
@@ -127,6 +130,7 @@ public interface StudentMapper {
         return MyBatis3Utils.insert(this::insert, record, student, c ->
             c.map(gradeId).toPropertyWhenPresent("gradeId", record::getGradeId)
             .map(name).toPropertyWhenPresent("name", record::getName)
+            .map(cardNum).toPropertyWhenPresent("cardNum", record::getCardNum)
             .map(gender).toPropertyWhenPresent("gender", record::getGender)
             .map(birthday).toPropertyWhenPresent("birthday", record::getBirthday)
             .map(takeCourses).toPropertyWhenPresent("takeCourses", record::getTakeCourses)
@@ -161,6 +165,7 @@ public interface StudentMapper {
     static UpdateDSL<UpdateModel> updateAllColumns(Student record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(gradeId).equalTo(record::getGradeId)
                 .set(name).equalTo(record::getName)
+                .set(cardNum).equalTo(record::getCardNum)
                 .set(gender).equalTo(record::getGender)
                 .set(birthday).equalTo(record::getBirthday)
                 .set(takeCourses).equalTo(record::getTakeCourses)
@@ -172,6 +177,7 @@ public interface StudentMapper {
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Student record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(gradeId).equalToWhenPresent(record::getGradeId)
                 .set(name).equalToWhenPresent(record::getName)
+                .set(cardNum).equalToWhenPresent(record::getCardNum)
                 .set(gender).equalToWhenPresent(record::getGender)
                 .set(birthday).equalToWhenPresent(record::getBirthday)
                 .set(takeCourses).equalToWhenPresent(record::getTakeCourses)
@@ -184,6 +190,7 @@ public interface StudentMapper {
         return update(c ->
             c.set(gradeId).equalTo(record::getGradeId)
             .set(name).equalTo(record::getName)
+            .set(cardNum).equalTo(record::getCardNum)
             .set(gender).equalTo(record::getGender)
             .set(birthday).equalTo(record::getBirthday)
             .set(takeCourses).equalTo(record::getTakeCourses)
@@ -198,6 +205,7 @@ public interface StudentMapper {
         return update(c ->
             c.set(gradeId).equalToWhenPresent(record::getGradeId)
             .set(name).equalToWhenPresent(record::getName)
+            .set(cardNum).equalToWhenPresent(record::getCardNum)
             .set(gender).equalToWhenPresent(record::getGender)
             .set(birthday).equalToWhenPresent(record::getBirthday)
             .set(takeCourses).equalToWhenPresent(record::getTakeCourses)

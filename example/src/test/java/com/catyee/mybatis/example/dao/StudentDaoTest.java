@@ -48,6 +48,24 @@ public class StudentDaoTest extends JUnitDaoWithFraud {
     }
 
     @Test
+    public void createIfNotExist() {
+        Student tsc = fraudStudent();
+        tsc.setCardNum(sc.getCardNum());
+        assertFalse(dao.createIfNotExist(tsc));
+        tsc = fraudStudent();
+        assertTrue(dao.createIfNotExist(tsc));
+    }
+
+    @Test
+    public void batchCreateIfNotExist() {
+        List<Student> students = fraudList(this::fraudStudent);
+        students.forEach(student -> student.setCardNum(sc.getCardNum()));
+        assertEquals(0, dao.batchCreateIfNotExist(students));
+        students = fraudList(this::fraudStudent);
+        assertEquals(students.size(), dao.batchCreateIfNotExist(students));
+    }
+
+    @Test
     public void update() {
         String newHomeTown = fraudUnique("new_town");
         LocalDate newBirthday = LocalDate.now().plusYears(-17);
